@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      table{
+        BORDER-COLLAPSE: collapse;
+        align:center;
+      }
+      tr{
+        height:30px;
+        line-height:30px;
+      }
+      td{
+        border:1px solid gray;
+      }
+      .titlecell{
+        width:50px;
+        text-align:center;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="messages">
+      <table id="intro">
+        <tr>
+          <td class="titlecell">昵称</td>
+          <td><input type="text" name="name" id="name"/></td>
+        </tr>
+        <tr>
+          <td class="titlecell">性别</td>
+          <td>
+            <input name="sex" type="radio" value="1" checked/>男
+            <input name="sex" type="radio" value="0"/>女
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="button" value="提交" onclick="submitUserinfo()"/>
+          </td>
+        </tr>
+      </table>
+    </ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <script>
+      var socket = io();
+
+      function submitUserinfo(){
+        var name = $("#name").val();
+        var sex = $("input[name='sex']:checked").val();
+        socket.emit('intro', {name:name,sex:sex});
+        $("#intro").hide();
+      }
+
+      $('form').submit(function(){
+          socket.emit('chat', $('#m').val());
+          $('#m').val('');
+          return false;
+      });
+      socket.on('chat', function(obj){
+          $('#messages').append($('<li>').text(obj.msg));
+      });
+      socket.on('waiting', function(msg){
+          console.log('waiting');
+      });
+    </script>
+  </body>
+</html>
