@@ -32,11 +32,13 @@ io.on('connection',function(socket){
 
     //断开连接
     socket.on('disconnect', function(){
+        console.log('a user disconnect');
         var disconnGuy = socketMap[socket.id];
         var other = disconnGuy.other;
         if(other){
             //已配对，通知对方并将对方放入等待区
             other.socket.emit("drop",1);
+            //切除关联
             other.other = null;
             if(other.sex==1){
                 waitingRom.boy.push(other);
@@ -80,7 +82,16 @@ io.on('connection',function(socket){
             other.socket.emit('chat',{ok:1,type:1,you:false,sex:obj.sex,msg:msg});
         }
         else{
-            obj.socket.emit('chat',{ok:0,type:1,error:'no body'});
+            //对方掉线
+            obj.socket.emit("drop",1);
+            //切除关联
+            obj.other = null;
+            if(obj.sex==1){
+                waitingRom.boy.push(obj);
+            }
+            else{
+                waitingRom.girl.push(obj);
+            }
         }
     });
 
@@ -101,7 +112,7 @@ io.on('connection',function(socket){
 });
 
 setInterval(function(){
-    console.log('boy:'+waitingRom.boy.length + ' girl:'+waitingRom.girl.length);
+    //console.log('boy:'+waitingRom.boy.length + ' girl:'+waitingRom.girl.length);
     if(waitingRom.boy.length>0 && waitingRom.girl.length>0){
         var min = waitingRom.boy.length;
         if(waitingRom.girl.length < waitingRom.boy.length){
