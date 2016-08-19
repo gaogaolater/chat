@@ -49,6 +49,7 @@
         margin:2px;
         border:1px solid white;
         border-radius:4px;
+        font-size:16px;
       }
       .chatpage .chatarea_bottom div{
         background-color:#04be02;
@@ -82,7 +83,7 @@
       .msg_left span{
         display:inline-block;
         float:left;
-        max-width:80%;
+        max-width:78%;
         line-height:25px;
         margin-left:10px;
         margin-top:6px;
@@ -102,13 +103,13 @@
         float:right;
       }
       .msg_right span{
+        background-color:#57f555;
         display:inline-block;
         float:right;
-        max-width:80%;
+        max-width:78%;
         line-height:25px;
         margin-right:10px;
         margin-top:6px;
-        background:white;
         padding:6px;
         word-break:break-all;
       }
@@ -201,6 +202,7 @@
       if(msg.length>0){
         socket.emit('chat', encodeURIComponent(msg));
         $('#msg').val('');
+        $('#msg').focus();
       }
   });
   
