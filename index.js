@@ -115,6 +115,8 @@ setInterval(function(){
             //提醒已经配对
             boy.socket.emit("waiting",0);
             girl.socket.emit("waiting",0);
+            boy.socket.emit('chat',{ok:1,type:1,you:false,sex:0,msg:'你好啊'});
+            girl.socket.emit('chat',{ok:1,type:1,you:false,sex:1,msg:'你好啊'});
             waitingRom.girl.splice(i,1);
             waitingRom.boy.splice(i,1);
         }

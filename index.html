@@ -22,37 +22,52 @@
       }
       .prepare{
           width:100%;
+          /*display:none;*/
       }
       .chatpage{
         display:none;
+        background-color:#F0F0F0;
         height:100%;
         width:100%;
         font-family: "Microsoft YaHei"
       }
       .chatpage .chatarea_top{
-        height:78%;
+        height:88%;
         width:96%;
         overflow:auto;
         padding:2%;
         background-color:#F0F0F0;
       }
       .chatpage .chatarea_bottom{
-        height:20%;
+        height:10%;
         width:100%;
         position:relative;
       }
       .chatpage .chatarea_bottom textarea{
-        width:80%;
-        height:80%;
-        margin-top:4%;
-        margin-left:2%;
-        border:0;
+        width:82%;
+        height:90%;
+        margin:2px;
+        border:1px solid white;
+        border-radius:4px;
       }
-      .chatpage .chatarea_bottom a{
+      .chatpage .chatarea_bottom div{
+        background-color:#04be02;
         position:absolute;
+        width:16%;
+        height:92%;
+        right:2px;
+        top:2px;
+        border-radius:4px;
+      }
+      .chatpage .chatarea_bottom div a{
+        position:absolute;
+        width:100%;
+        text-align:center;
         top:50%;
-        right:10px;
-        margin-top:-10px;
+        height:25px;
+        line-height:25px;
+        margin-top:-13px;
+        color:white;
       }
       .msg_left{
         width:90%;
@@ -73,6 +88,7 @@
         margin-top:6px;
         background:white;
         padding:6px;
+        word-break:break-all;
       }
 
       .msg_right{
@@ -94,6 +110,7 @@
         margin-top:6px;
         background:white;
         padding:6px;
+        word-break:break-all;
       }
 </style>
 </head>
@@ -158,12 +175,12 @@
 </div>
 
 <div class="chatpage">
-  <div class="chatarea_top">
-    
-  </div>
+  <div class="chatarea_top"></div>
   <div class="chatarea_bottom">
-    <textarea id="msg"></textarea>
-    <a href="javascript:;" id="send" class="weui_btn weui_btn_mini weui_btn_primary">发送</a>
+    <textarea id="msg" style="width:260;overflow-y:visible;"></textarea>
+    <div id="send">
+      <a href="javascript:;">发送</a>
+    </div>
   </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
@@ -180,8 +197,11 @@
   });
 
   $('#send').click(function(){
-      socket.emit('chat', $('#msg').val());
-      $('#msg').val('');
+      var msg = $('#msg').val();
+      if(msg.length>0){
+        socket.emit('chat', encodeURIComponent(msg));
+        $('#msg').val('');
+      }
   });
   
   function appendMsg(obj){
@@ -194,7 +214,7 @@
         html+="<img src='/public/images/girl.png'/>";
       }
       html+="<span>";
-      html+=obj.msg;
+      html+=decodeURIComponent(obj.msg).replace("<","&#60;").replace(">","&#62;");
       html+="</span></div>";
       $(".chatarea_top").append(html);
       var chatArea = $(".chatarea_top")[0];
