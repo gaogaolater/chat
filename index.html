@@ -197,6 +197,8 @@
       html+=obj.msg;
       html+="</span></div>";
       $(".chatarea_top").append(html);
+      var chatArea = $(".chatarea_top")[0];
+      chatArea.scrollTop = chatArea.scrollHeight;
   }
   
   socket.on('chat', function(obj){
