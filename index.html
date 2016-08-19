@@ -218,6 +218,8 @@
     }
     else{
       $("#loadingtip").text("匹配成功");
+      //清空聊天
+      $(".chatarea_top").html("");
       setTimeout(function(){
         $(".prepare").hide();
         $(".chatpage").show();
