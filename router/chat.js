@@ -1,11 +1,11 @@
 var express = require('express');
+var router=express.Router();
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.use('/public',express.static(__dirname+'/public'));
-app.get('/',function(req,res){
-    res.sendFile(__dirname+"/index.html");
+router.get('/',function(req,res){
+    res.render("chat");
 });
 
 //等待区
@@ -144,6 +144,4 @@ setInterval(function(){
     }      
 },1000);
 
-http.listen(3000,function(){
-    console.log('server on 3000');
-});
+module.exports=router;
