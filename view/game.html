@@ -6,8 +6,8 @@
     <title>WeUI</title>
     <style>
         .ball{
-            width:2rem;
-            height:2rem;
+            width:30px;
+            height:30px;
             border-radius:2rem;
             background-color:red;
             position:absolute;
@@ -60,21 +60,57 @@
 <body>
 <div class="door door1"></div>    
 <div class="player player1" id="player1"></div>
-<div class="ball"></div>
+<div class="ball" id="ball"></div>
 <div class="player player2" id="player2"></div>
 <div class="door door2"></div>  
 <script src="/public/js/zepto.min.js"></script>
 <script src="/public/js/socket.io.js"></script>
 <script>
-var socket = io();
+//var socket = io();
 $(".player").on("touchmove",function(e){
     var touch = e.touches[0];
     socket.emit("move",{id:$(this).attr("id"),x:touch.clientX,y:touch.clientY});
 });
 
-socket.on("move",function(msg){
-    $("#"+msg.id).css({top:msg.y,left:msg.x});
-});
+// socket.on("move",function(msg){
+//     $("#"+msg.id).css({top:msg.y,left:msg.x});
+// });
+
+var maxWidth = document.documentElement.clientWidth;
+var maxHeight = document.documentElement.clientHeight;
+var ball = $(".ball");
+var statex=0;
+var statey=0;
+var x = $("#ball").offset().left;
+var y = $("#ball").offset().top;
+setInterval(function(){
+    if(statex==0){
+        x++;
+        if(x>=maxWidth){
+            statex=1;
+        }
+    }
+    else{
+        x--;
+        if(x<=0){
+            statex=0;
+        }
+    }
+    if(statey==0){
+        y++;
+        if(y>=maxHeight){
+            statey=1;
+        }
+    }
+    else{
+        y--;
+        if(y<=0){
+            statey=0;
+        }
+    }
+    console.log(x+' '+y);
+    $("#ball").css({"left":x,"top":y});
+},16);
 </script>
 </body>
 </html>
