@@ -4,115 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>WeUI</title>
-    <style>
-        .ball{
-            width:30px;
-            height:30px;
-            border-radius:2rem;
-            background-color:red;
-            position:absolute;
-            top:50%;
-            left:50%;
-            margin-left:-1rem;
-            margin-top:-1rem;
-        }
-        .player{
-            width:3rem;
-            height:3rem;
-            border-radius:3rem;
-            position:absolute;
-        }
-        .player1{
-            top:20%;
-            left:50%;
-            margin-left:-1.5rem;
-            background-color:green;
-        }
-        .player2{
-            top:70%;
-            left:50%;
-            margin-left:-1.5rem;
-            background-color:blue;
-        }
-        .door{
-            width:10rem;
-            height:3rem;
-            position:absolute;
-        }
-        .door1{
-            top:2%;
-            left:50%;
-            margin-left:-5rem;
-            border-top:1px solid black;
-            border-left:1px solid black;
-            border-right:1px solid black;
-        }
-        .door2{
-            bottom:2%;
-            left:50%;
-            margin-left:-5rem;
-            border-bottom:1px solid black;
-            border-left:1px solid black;
-            border-right:1px solid black;
-        }
-    </style>
 </head>
 <body>
-<div class="door door1"></div>    
-<div class="player player1" id="player1"></div>
-<div class="ball" id="ball"></div>
-<div class="player player2" id="player2"></div>
-<div class="door door2"></div>  
+
 <script src="/public/js/zepto.min.js"></script>
 <script src="/public/js/socket.io.js"></script>
 <script>
-//var socket = io();
-$(".player").on("touchmove",function(e){
-    var touch = e.touches[0];
-    socket.emit("move",{id:$(this).attr("id"),x:touch.clientX,y:touch.clientY});
-});
-
-// socket.on("move",function(msg){
-//     $("#"+msg.id).css({top:msg.y,left:msg.x});
-// });
-
-var maxWidth = document.documentElement.clientWidth;
-var maxHeight = document.documentElement.clientHeight;
-var ball = $(".ball");
-var statex=0;
-var statey=0;
-var x = $("#ball").offset().left;
-var y = $("#ball").offset().top;
-var tan = Math.tan(10*2*Math.PI/360);
-setInterval(function(){
-    if(statex==0){
-        x++;
-        if(x>=maxWidth){
-            statex=1;
-        }
-    }
-    else{
-        x--;
-        if(x<=0){
-            statex=0;
-        }
-    }
-    var rowY = x*tan;
-    if(statey==0){
-        y = y + rowY;
-        if(y>=maxHeight){
-            statey=1;
-        }
-    }
-    else{
-        y = y- rowY;
-        if(y<=0){
-            statey=0;
-        }
-    }
-    console.log(x+' '+y);
-    $("#ball").css({"left":x,"top":y});
-},16);
+var socket = io();
+socket.emit("createRoom");
 </script>
 </body>
 </html>

@@ -86,35 +86,36 @@ var x = $("#ball").offset().left;
 var y = $("#ball").offset().top;
 var tan = Number(Math.tan(20*2*Math.PI/360).toFixed(2));
 var increment = 1;
-setInterval(function(){
-    if(statex==0){
-        x+=increment;
-        if(x>=maxWidth){
-            statex=1;
-        }
-    }
-    else{
-        x-=increment;
-        if(x<=0){
-            statex=0;
-        }
-    }
-    var rowY = increment*tan;
-    if(statey==0){
-        y = y + rowY;
-        if(y>=maxHeight){
-            statey=1;
-        }
-    }
-    else{
-        y = y- rowY;
-        if(y<=0){
-            statey=0;
-        }
-    }
-    //console.log(x+' '+y);
-    $("#ball").css({"left":x,"top":y});
-},16);
+
+// setInterval(function(){
+//     if(statex==0){
+//         x+=increment;
+//         if(x>=maxWidth){
+//             statex=1;
+//         }
+//     }
+//     else{
+//         x-=increment;
+//         if(x<=0){
+//             statex=0;
+//         }
+//     }
+//     var rowY = increment*tan;
+//     if(statey==0){
+//         y = y + rowY;
+//         if(y>=maxHeight){
+//             statey=1;
+//         }
+//     }
+//     else{
+//         y = y - rowY;
+//         if(y<=0){
+//             statey=0;
+//         }
+//     }
+//     //console.log(x+' '+y);
+//     $("#ball").css({"left":x,"top":y});
+// },16);
 </script>
 </body>
 </html>
