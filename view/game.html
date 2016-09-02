@@ -83,6 +83,7 @@ var statex=0;
 var statey=0;
 var x = $("#ball").offset().left;
 var y = $("#ball").offset().top;
+var tan = Math.tan(10*2*Math.PI/360);
 setInterval(function(){
     if(statex==0){
         x++;
@@ -96,14 +97,15 @@ setInterval(function(){
             statex=0;
         }
     }
+    var rowY = x*tan;
     if(statey==0){
-        y++;
+        y = y + rowY;
         if(y>=maxHeight){
             statey=1;
         }
     }
     else{
-        y--;
+        y = y- rowY;
         if(y<=0){
             statey=0;
         }
