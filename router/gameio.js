@@ -40,9 +40,11 @@ var Ball = function(){
     }
 };
 
-var Player = function(){
-    this.id = "";
-    this.socket = null;
+var Player = function(roomid,socket,other){
+    this.id = socket.id;
+    this.other = other;//对手 对象
+    this.socket = socket;
+    this.roomid = roomid;
     this.x=0;
     this.y=0;
     this.w=0;
@@ -53,10 +55,19 @@ var Player = function(){
     };
 };
 
+//room应该和game合并  啊啊！！！
 var Game = function(){
+    this.timer = null;
+
     this.start = function(){},
     this.pause = function(){},
-    this.over = function(){}
+    this.over = function(){},
+    this.join = (socket)=>{
+        
+    },
+    this.over = ()=>{
+
+    }
 }
 
 
@@ -70,16 +81,15 @@ module.exports = function(io,socket){
         var roomObj = 
         {
             roomid:roomid,
-            player1:socket,
+            player1:new Player(roomid,socket,null),
             player2:null,
-            ball:null,
-            //超时后检查是否开始，如果还没开始则销毁room
-            checkRuningTimer : null
+            ball:null
         };
         roomObj.checkRuningTimer = setTimeout(function(){
             if(roomObj.player2 == null){
-                //超时还没用户进来 就提出房间
+                //超时还没用户进来 就退出房间
                 delete rooms.roomid;
+                socket.emit("timeout",{});
             }
         },1000*10);
         rooms.roomid = roomObj;
@@ -87,18 +97,38 @@ module.exports = function(io,socket){
         socket.emit("createRoom",uuid.v1());
     });
 
+    //加入游戏
     socket.on("join",function(msg){
-        
+        var roomid = msg.roomid;
+        var room = rooms.roomid;
+        if(room){
+            var player1 = room.player1;
+            var player2 = new Player(roomid,socket,player1);
+            player1.other = player2;
+            room.player2 = player2;
+        }
     });
 
+    //加入游戏
+    socket.on("move",function(msg){
+        var room = rooms.socket.roomid;
+        room.move();
+    });
+
+    //断开连接
     socket.on("disconnect",function(msg){
         //销毁room
         if(socket.roomid){
             var room = rooms.roomid;
-            if(room && socket.other){
-                
+            if(room){
+                 delete rooms.roomid;
+                 //通知另一方
+                 if(socket.other){
+                     socket.other.emit("otherdrops",{});
+                 }
             }
-            
         }
     });
+
+
 };
