@@ -57,17 +57,19 @@ var Player = function(roomid,socket,other){
 
 //room应该和game合并  啊啊！！！
 var Game = function(){
-    this.timer = null;
-
-    this.start = function(){},
-    this.pause = function(){},
-    this.over = function(){},
+    this.runingTimer = null;
+    this.roomid = 1;
+    this.player1 = null;
+    this.player2 = null;
+    this.ball = null;
+    //超时后检查是否开始，如果还没开始则销毁room
+    this.waitingTimer = null;
     this.join = (socket)=>{
         
     },
-    this.over = ()=>{
-
-    }
+    this.start = ()=>{},
+    this.pause = ()=>{},
+    this.over = ()=>{}
 }
 
 
