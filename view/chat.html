@@ -5,115 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>快聊</title>
     <link rel="stylesheet" href="/public/css/weui.min.css"/>
-    <style>
-      html,body{height:100%;overflow:hidden;margin:0;padding:0;}
-      .hd{
-        padding:2em 0;
-      }
-      .page_title{
-          text-align: center;
-          font-size: 34px;
-          color: #3cc51f;
-          font-weight: 400;
-          margin: 0 15%;
-      }
-      .spacing{
-          padding:15px;
-      }
-      .prepare{
-          width:100%;
-          /*display:none;*/
-      }
-      .chatpage{
-        display:none;
-        background-color:#F0F0F0;
-        height:100%;
-        width:100%;
-        font-family: "Microsoft YaHei"
-      }
-      .chatpage .chatarea_top{
-        height:88%;
-        width:96%;
-        overflow:auto;
-        padding:2%;
-        background-color:#F0F0F0;
-      }
-      .chatpage .chatarea_bottom{
-        height:10%;
-        width:100%;
-        position:relative;
-      }
-      .chatpage .chatarea_bottom textarea{
-        width:82%;
-        height:90%;
-        margin:2px;
-        border:1px solid white;
-        border-radius:4px;
-        font-size:16px;
-      }
-      .chatpage .chatarea_bottom div{
-        background-color:#04be02;
-        position:absolute;
-        width:16%;
-        height:92%;
-        right:2px;
-        top:2px;
-        border-radius:4px;
-      }
-      .chatpage .chatarea_bottom div a{
-        position:absolute;
-        width:100%;
-        text-align:center;
-        top:50%;
-        height:25px;
-        line-height:25px;
-        margin-top:-13px;
-        color:white;
-      }
-      .msg_left{
-        width:90%;
-        float:left;
-        margin-top:10px;
-      }
-      .msg_left img{
-        width:35px;
-        height:35px;
-        float:left;
-      }
-      .msg_left span{
-        display:inline-block;
-        float:left;
-        max-width:78%;
-        line-height:25px;
-        margin-left:10px;
-        margin-top:6px;
-        background:white;
-        padding:6px;
-        word-break:break-all;
-      }
-
-      .msg_right{
-        width:90%;
-        float:right;
-        margin-top:10px;
-      }
-      .msg_right img{
-        width:35px;
-        height:35px;
-        float:right;
-      }
-      .msg_right span{
-        background-color:#57f555;
-        display:inline-block;
-        float:right;
-        max-width:78%;
-        line-height:25px;
-        margin-right:10px;
-        margin-top:6px;
-        padding:6px;
-        word-break:break-all;
-      }
-</style>
+    <link rel="stylesheet" href="/public/css/chat.css"/>
 </head>
 <body>
 <!-- loading toast -->
@@ -137,7 +29,7 @@
         <p id="loadingtip" class="weui_toast_content">正在匹配中...</p>
     </div>
 </div>
-<div class="prepare">
+<div class="prepare" style="display:block;">
   <div class="hd">
       <h1 class="page_title">预备</h1>
   </div>
@@ -160,7 +52,6 @@
           </div>
       </label>
       <label class="weui_cell weui_check_label" for="x12">
-
           <div class="weui_cell_bd weui_cell_primary">
               <p>女孩</p>
           </div>
@@ -175,15 +66,19 @@
   </div>
 </div>
 
-<div class="chatpage">
+<div class="chatpage" style="display:none;">
   <div class="chatarea_top"></div>
   <div class="chatarea_bottom">
-    <textarea id="msg" style="width:260;overflow-y:visible;"></textarea>
-    <div id="send">
+    <textarea id="msg"></textarea>
+    <div id="speach" class="speach">
+      <a href="javascript:;">语音</a>
+    </div>
+    <div id="send" class="send">
       <a href="javascript:;">发送</a>
     </div>
   </div>
 </div>
+
 <script src="/public/js/socket.io.js"></script>
 <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
 <script>
@@ -205,6 +100,25 @@
         $('#msg').focus();
       }
   });
+
+  $("#speach").on("touchstart",function(){
+        if(typeof mc != "undefined"){
+            mc.startRecord();
+        }
+  });
+
+  $("#speach").on("touchend",function(){
+        if(typeof mc != "undefined"){
+            var filename = mc.stopRecord(sessionStorage.socketid);
+        }   
+  });
+
+  function play(path){
+        if(typeof mc != "undefined"){
+            path = "http://192.168.199.122:3000/public/upload/"+path+".spx"
+            mc.startPlay(path);
+        }
+  }
   
   function appendMsg(obj){
       console.log(obj);
@@ -216,7 +130,12 @@
         html+="<img src='/public/images/girl.png'/>";
       }
       html+="<span>";
-      html+=decodeURIComponent(obj.msg).replace("<","&#60;").replace(">","&#62;");
+      if(obj.type==1){
+        html+=decodeURIComponent(obj.msg).replace("<","&#60;").replace(">","&#62;");
+      }
+      else if(obj.type==2){
+        html += "<span onclick='play("+obj.path+")'>点击播放</span>";
+      }
       html+="</span></div>";
       $(".chatarea_top").append(html);
       var chatArea = $(".chatarea_top")[0];
@@ -232,6 +151,10 @@
       $(".chatpage").hide();
       $('#loadingToast').show();
       $("#loadingtip").text("对方已掉线，重连中...");
+  });
+
+  socket.on('connected', function(obj){
+      sessionStorage.socketid = obj.id;
   });
 
   socket.on('waiting', function(msg){
