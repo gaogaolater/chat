@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/public/css/chat.css"/>
 </head>
 <body>
+<div class="logarea"></div>
 <!-- loading toast -->
 <div id="loadingToast" class="weui_loading_toast" style="display:none;">
     <div class="weui_mask_transparent"></div>
@@ -27,6 +28,14 @@
             <div class="weui_loading_leaf weui_loading_leaf_11"></div>
         </div>
         <p id="loadingtip" class="weui_toast_content">正在匹配中...</p>
+    </div>
+</div>
+
+<div id="micToast" class="weui_loading_toast" style="display:none;">
+    <div class="weui_mask_transparent"></div>
+    <div class="weui_toast">
+        <img class="mic" src="/public/images/mike.png"/>
+        <p id="loadingtip" style="margin-top:0;" class="weui_toast_content">按住说话</p>
     </div>
 </div>
 <div class="prepare" style="display:block;">
@@ -69,10 +78,10 @@
 <div class="chatpage" style="display:none;">
   <div class="chatarea_top"></div>
   <div class="chatarea_bottom">
-    <textarea id="msg"></textarea>
     <div id="speach" class="speach">
       <a href="javascript:;">语音</a>
     </div>
+    <textarea id="msg"></textarea>
     <div id="send" class="send">
       <a href="javascript:;">发送</a>
     </div>
@@ -104,19 +113,19 @@
   $("#speach").on("touchstart",function(){
         if(typeof mc != "undefined"){
             mc.startRecord();
+            $("#micToast").show();
         }
   });
 
   $("#speach").on("touchend",function(){
         if(typeof mc != "undefined"){
             var filename = mc.stopRecord(sessionStorage.socketid);
+            $("#micToast").hide();
         }   
   });
 
   function play(path){
         if(typeof mc != "undefined"){
-            //path = "http://121.42.186.141:3000/public/upload/"+path+".spx"
-            //path = "http://192.168.199.122:3000/public/upload/"+path+".spx"
             mc.startPlay(path);
         }
   }
@@ -130,12 +139,13 @@
       else{
         html+="<img src='/public/images/girl.png'/>";
       }
-      html+="<span>";
+      
       if(obj.type==1){
+        html+="<span>";
         html+=decodeURIComponent(obj.msg).replace("<","&#60;").replace(">","&#62;");
       }
       else if(obj.type==2){
-        html += "<span onclick='play("+obj.path+")'>点击播放</span>";
+        html+="<span onclick=\"play('"+obj.path+"')\">点击播放";
       }
       html+="</span></div>";
       $(".chatarea_top").append(html);

@@ -19,7 +19,7 @@ router.get('/', function (req, res) {
 //上传文件
 router.post("/upload",upload.single('spxfile'), function(req,res,next){
     var temp_path = req.file.path;
-    var now = new Date().getTime();
+    var now = new Date().getTime()+"";
     var target_path = "./public/upload/"+now+".spx";
     var socketid = req.param("socketid");
     fs.rename(temp_path,target_path,function(err){
